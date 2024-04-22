@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Wallet DApp</title>
+</head>
+<body>
+    <h1 class="heading">Welcome to Simple Wallet DApp</h1>
+
+    <div id="connectSection">
+        <button onclick="connectWallet()">Connect MetaMask Wallet</button>
+    </div>
+
+    <div id="balanceSection" class="hidden">
+        <h2>Account Balance</h2>
+        <div id="balance">Balance: 0 ETH</div>
+    </div>
+
+    <div id="sendSection" class="hidden">
+        <h2>Send Ether</h2>
+        <input type="text" id="receiverAddress" placeholder="Receiver Address">
+        <input type="number" id="amountToSend" placeholder="Amount in ETH">
+        <button onclick="sendEther()">Send Ether</button>
+    </div>
+
+    <div id="transactionHistorySection" class="hidden">
+        <h2>Transaction History</h2>
+        <ul id="transactionList">
+            <!-- Transactions will be listed here -->
+        </ul>
+    </div>
+
+    <div id="notification" class="hidden">
+        <!-- Confirmation Message -->
+    </div>
