@@ -3,9 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Wallet DApp</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    
+    <h1>Wallet DApp</h1>
+
+    <div id="connectSection">
+        <button onclick="connectWallet()">Connect to MetaMask</button>
+    </div>
+
+    <div id="balanceSection">
+        <h2>Account Balance</h2>
+        <div id="balance">Balance: 0 ETH</div>
+    </div>
+
+    <div id="sendSection">
+        <h2>Send Ether</h2>
+        <input type="text" id="sendToAddress" placeholder="Send to Address">
+        <input type="number" id="sendAmount" placeholder="Amount in ETH">
+        <button onclick="sendEther()">Send</button>
+    </div>
+
+    <div id="receiveSection" >
+        <h2>Receive Ether</h2>
+        <p>Your Address: <span id="yourAddress">-</span></p>
+        <p>Share this address to receive Ether.</p>
+    </div>
+
+    <div id="dual-sections" >
+        <div id="tokensSection">
+            <h2>Your Tokens</h2>
+            <ul id="tokensList">
+                <!-- Token list will be populated here -->
+            </ul>
+        </div>
+
+        <div id="historySection">
+            <h2>Transaction History</h2>
+            <ul id="transactionHistory">
+                <!-- Transaction history will be listed here -->
+            </ul>
+        </div>
+    </div>
+
+    <div id="notification" class="hidden"></div>
+
+    <script src="app.js"></script>
 </body>
 </html>
