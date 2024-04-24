@@ -3,27 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wallet DApp</title>
+    <title>ACE Wallet</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Wallet DApp</h1>
+    <h1>ACE Wallet</h1>
 
     <div id="connectSection">
         <button onclick="connectWallet()">Connect to MetaMask</button>
     </div>
 
     <div id="balanceSection">
+        <section class="notifications">
+            <div id="notification-Error">
+                <p>Not Enough Balance</p>
+            </div>
+        </section>
         <h2>Account Balance</h2>
         <div id="balance">Balance: 0 ETH</div>
     </div>
 
     <div id="sendSection">
+        <section class="notifications">
+            <div id="notification-Success">
+                <p>Successful</p>
+            </div>
+        </section>
         <h2>Send Ether</h2>
         <input type="text" id="sendToAddress" placeholder="Send to Address">
         <input type="number" id="sendAmount" placeholder="Amount in ETH">
         <button onclick="sendEther()">Send</button>
     </div>
+   
+    
 
     <div id="receiveSection" >
         <h2>Receive Ether</h2>
@@ -47,8 +59,10 @@
         </div>
     </div>
 
-    <div id="notification" class="hidden"></div>
+    <footer>
+        <p>&copy;<span id="copyright"></span></p>
+    </footer>
 
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
