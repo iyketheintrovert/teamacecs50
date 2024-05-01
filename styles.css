@@ -1,3 +1,5 @@
+/* Custom CSS*/
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
@@ -9,10 +11,10 @@ body {
     color: #333;
 }
 
-h1 {
+h1,h2 {
     color: #444;
+    cursor: pointer;
 }
-
 
 button {
     background-color: #153448;
@@ -71,43 +73,47 @@ li {
     border-bottom: 1px solid #eee;
 }
 
-.notifications{
-    display: inline-grid;
-    float: inline-end;
-}
 
-#notification-Error {
+#notification {
     color: red;
-    /* padding: 10px; */
+    padding: 10px;
     background-color: #f8d7da;
     border-color: #f5c6cb;
-    margin-top: -7px;
+    margin-top: 20px;
     border-radius: 4px;
-    width: 180px;
-    text-align: center;
-    float: right;
-    height: 30px;
-    padding-top: 0px;
-    padding-bottom: 25px;
-    /* display: none;  */
+    display: none; 
 }
 
-#notification-Success {
-    color: rgb(43, 219, 73);
-    /* padding: 10px; */
-    background-color: #ade5b0;
-    border-color: #b5eeb0;
-    margin-top: -2px;
-    border-radius: 4px;
-    width: 180px;
+#bal-notification{
     text-align: center;
-    float: right;
-    height: 30px;
-    padding-top: 0px;
-    padding-bottom: 25px;
+    font-weight: bold;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    margin-top: 9px;
 }
 
+#card-send{
+    background-color: red;
+    height: 35px;
+    width: 40%;
+    margin: auto;
+    padding: 3px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 2px gray;
+    margin-right: 5px;
+    display: none;
+    opacity: 0.7;
+}
 
+#send-notification{
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    margin-top: 9px;
+}
 
 #dual-sections {
     display: flex;
@@ -119,6 +125,7 @@ li {
 #tokensSection, #historySection {
     flex: 1;
     min-width: 300px; 
+    cursor: pointer;
 }
 
 
@@ -127,28 +134,3 @@ li {
         flex-direction: column;
     }
 }
-
-/* To make the error notification responsive */
-@media (max-width: 600px) {
-    #balanceSection {
-      display: flex;
-      flex-direction: column;
-    }
-     #notification-Error {
-    margin: 0 auto;
-    width: 80%;
-  }
-    #balance {
-      margin-top: 10px;
-    }
-  }
-  @media (max-width: 600px) {
-    #sendSection {
-      display: flex;
-      flex-direction: column;
-    }
-     #notification-Success {
-    margin: 0 auto;
-    width: 80%;
-    }
-  }
