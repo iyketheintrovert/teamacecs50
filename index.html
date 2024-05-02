@@ -11,9 +11,8 @@
 </head>
 <body>
     <h1>ACE Wallet</h1>
-
     <p id="connectSection" class="mt-4">
-        <button id="connectButton" class="btn btn-primary">Connect to MetaMask</button>
+        <button onclick="connectUserWallet()" id="connectButton" class="btn btn-primary">Connect to MetaMask</button>
     </p>
 
     <div id="balanceSection" class="mt-4">
@@ -36,7 +35,7 @@
     <div id="receiveSection" class="mt-4">
         <h2>Receive Ether</h2>
         <div><p>Your Address: <span id="yourAddress">-</span></p></div>
-        <p class="mt-4">Share this address to receive Ether.</p>
+        <p class="mt-4">Copy and share this address to receive Ether.</p>
     </div>
 
     <div id="dual-sections" >
@@ -46,7 +45,7 @@
         </div>
 
         <div id="historySection" class="mt-4">
-            <h2>Transaction History</h2>
+            <h2 onclick="handleUserHistory()">Transaction History</h2>
             <ul id="transactionHistory" class="list-group">
                 <!-- Transaction history will be listed here -->
             </ul>

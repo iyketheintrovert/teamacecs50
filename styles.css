@@ -74,14 +74,17 @@ li {
 }
 
 
-#notification {
-    color: red;
-    padding: 10px;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-    margin-top: 20px;
-    border-radius: 4px;
-    display: none; 
+#card-balance{
+    background-color: red;
+    height: 35px;
+    width: auto;
+    margin: auto;
+    padding: 3px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 2px gray;
+    margin-right: 5px;
+    display: none;
+    opacity: 0.4;
 }
 
 #bal-notification{
@@ -96,7 +99,7 @@ li {
 #card-send{
     background-color: red;
     height: 35px;
-    width: 40%;
+    width: auto;
     margin: auto;
     padding: 3px;
     border-radius: 5px;
@@ -132,5 +135,15 @@ li {
 @media (max-width: 768px) {
     #dual-sections {
         flex-direction: column;
+        width: auto;
+    }
+
+    #tokensSection, #historySection {
+        flex: 1;
+        min-width: auto; 
+        cursor: pointer;
+        font-size: x-small;
     }
 }
+
+/* To make the error notification responsive */
