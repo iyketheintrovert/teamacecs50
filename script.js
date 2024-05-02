@@ -1,16 +1,21 @@
+let transactionSuccessful = false;
+
 
 async function connectUserWallet() {
     try {
         if (typeof window.ethereum !== 'undefined') {
             window.web3 = new Web3(window.ethereum);
             await window.ethereum.enable();
+            document.getElementById('btn-connect').innerHTML = "wallet connected"
         } else {
             alert('Please install or connect to your MetaMask to use this DApp.');
         }
     } catch (error) {
         alert('connection error pls try again');
     }
+    recieveFund();
     handleBalance();
+    
 }
 
 async function handleBalance() {
@@ -71,12 +76,21 @@ async function sendFunds() {
         sendNotification.innerHTML = "transaction successfully sent";
 
         handleBalance();
+        transactionSuccessful = true;
+        handleUserHistory()
 
     } catch (error) {
         alert('Failed to send transaction: ' + error.message);
     }
 }
 
+
+async function recieveFund() {
+    const accounts = await web3.eth.getAccounts();
+    const walletAddress = accounts[0];
+    let userAddress = document.getElementById('yourAddress')
+    userAddress.innerHTML = walletAddress
+}
 
 async function viewToken() {
     try {
@@ -134,7 +148,7 @@ async function viewToken() {
             balancesDiv.innerHTML = ''; 
             let myToken = tokenBalances.forEach(token => {
                 const tokenDiv = document.createElement('div');
-                tokenDiv.innerHTML = `<strong>${token.name}:</strong> ${token.balance}`;
+                tokenDiv.innerHTML = `Token Name: <strong> ${token.name}</strong><br>Token Balance: <strong>${token.balance}</strong>`;
                 balancesDiv.appendChild(tokenDiv);
                
             });
@@ -150,7 +164,31 @@ async function viewToken() {
     }
 }
 
+function handleUserHistory() {
+    let userHistory = document.getElementById('transaction-history')
+    const recipient = document.getElementById('sendToAddress').value;
+    const amount = document.getElementById('sendAmount').value;
 
+    let userHistoryArray = []
+    let transactionDate = new Date();
+
+    if (transactionSuccessful || userHistoryArray.length !== 0) {
+        userHistory.innerHTML = `you made transaction of ${amount} Eth to ${recipient} on ${transactionDate.getDate()}`
+        userHistoryArray = userHistoryArray.push(userHistory)
+        userHistoryArray = userHistory;
+
+        setTimeout(() => {
+            userHistory.innerHTML = ""
+        }, 4000)
+
+    }else {
+        userHistory.innerHTML = "You have no transactions yet"
+        setTimeout(() => {
+            userHistory.innerHTML = ""
+        }, 4000)
+    }
+
+}
 
 
 
