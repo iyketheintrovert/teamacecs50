@@ -1,22 +1,25 @@
 
 let transactionSuccessful = false;
+let web3;
 
 async function connectUserWallet() {
   let account;
   try {
-      if (typeof window.ethereum !== 'undefined') {
-        window.web3 = new Web3(window.ethereum);
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
         await window.ethereum.enable();
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        console.log('Connected to MetaMask');
         const account = accounts[0];
-        document.getElementById('btn-connect').innerHTML = "Connected";
-        receiveFund();
-        loadBalance(account);
+        await receiveFund();
+        await loadBalance(account);
+        document.getElementById('connectButton').innerHTML = "Connected";
       } else {
           alert('Please install or connect to your MetaMask to use this DApp.');
       }
   } catch (error) {
-      alert('connection error pls try again');
+    console.error('MetaMask connection error:', error);
+    alert('connection error pls try again');
   } 
 }
 
@@ -61,8 +64,8 @@ async function sendFunds() {
   try {
     // Send Transaction
     const transaction = {
-      from: account.
-      to: recipient;
+      from: account,
+      to: recipient,
       value: web3.utils.toWei(amount, 'ether')
     };
     const receipt = await ethereum.request({ method: 'eth_sendTransaction', params: [transaction] });
@@ -95,7 +98,7 @@ async function sendFunds() {
 //     }
 
 
-async function recieveFund() {
+async function receiveFund() {
     const accounts = await web3.eth.getAccounts();
     const walletAddress = accounts[0];
     let userAddress = document.getElementById('yourAddress')
@@ -170,44 +173,43 @@ function handleUserHistory() {
 }
 
 
-    async function validateInputs(recipient, amount) {
-        if (recipient.trim() === '' || amount.trim() === '' || isNaN(amount) || parseFloat(amount) <= 0) {
-            throw new Error('Please enter a valid recipient address and amount.');
-        }
-        if (!web3.utils.isAddress(recipient)) {
-            throw new Error('Invalid recipient address.');
-        }
+async function validateInputs(recipient, amount) {
+    if (recipient.trim() === '' || amount.trim() === '' || isNaN(amount) || parseFloat(amount) <= 0) {
+        throw new Error('Please enter a valid recipient address and amount.');
     }
-
-    async function handleSubmit(event) {
-        event.preventDefault();
-        const recipient = document.getElementById('sendToAddress').value;
-        const amount = document.getElementById('sendAmount').value;
-
-        try {
-            // Validate inputs
-            await validateInputs(recipient, amount);
-            // Connect to MetaMask and get the selected account
-            const from = await connectUserWallet();
-            // Send transaction
-            const receipt = await sendTransaction(from, recipient, amount);
-            // Reload balance after successful transaction
-            await loadBalance(from);
-            // Show success notification
-            document.getElementById('notification').textContent = 'Transaction successful!';
-            document.getElementById('notification').style.display = 'block';
-        } catch (error) {
-            // Show error notification
-            document.getElementById('notification').textContent = error.message;
-            document.getElementById('notification').style.display = 'block';
-        }
+    if (!web3.utils.isAddress(recipient)) {
+        throw new Error('Invalid recipient address.');
     }
+}
 
-    // document.getElementById('connectButton').addEventListener('click', connectUserWallet);
-    document.getElementById('sendButton').addEventListener('click', handleSubmit);
+async function handleSubmit(event) {
+    event.preventDefault();
+    const recipient = document.getElementById('sendToAddress').value;
+    const amount = document.getElementById('sendAmount').value;
+
+    try {
+        // Validate inputs
+        await validateInputs(recipient, amount);
+        // Connect to MetaMask and get the selected account
+        const from = await connectUserWallet();
+        // Send transaction
+        const receipt = await sendTransaction(from, recipient, amount);
+        // Reload balance after successful transaction
+        await loadBalance(from);
+        // Show success notification
+        document.getElementById('notification').textContent = 'Transaction successful!';
+        document.getElementById('notification').style.display = 'block';
+    } catch (error) {
+        // Show error notification
+        document.getElementById('notification').textContent = error.message;
+        document.getElementById('notification').style.display = 'block';
+    }
+}
+
+// document.getElementById('connectButton').addEventListener('click', connectUserWallet);
+document.getElementById('sendButton').addEventListener('click', handleSubmit);
 
 
-    let copyright = document.getElementById("copyright")
-    let date = new Date()
-    copyright.innerHTML = date.getFullYear()
-});
+let copyright = document.getElementById("copyright")
+let date = new Date()
+copyright.innerHTML = date.getFullYear();
