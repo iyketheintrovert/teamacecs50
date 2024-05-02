@@ -1,31 +1,37 @@
+
 let transactionSuccessful = false;
 
-
 async function connectUserWallet() {
+  let account;
+  try {
+      if (typeof window.ethereum !== 'undefined') {
+        window.web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        const account = accounts[0];
+        document.getElementById('btn-connect').innerHTML = "Connected";
+        receiveFund();
+        loadBalance(account);
+      } else {
+          alert('Please install or connect to your MetaMask to use this DApp.');
+      }
+  } catch (error) {
+      alert('connection error pls try again');
+  } 
+}
+
+// Function to load user's account balance and show wallet address
+async function loadBalance(account) {
     try {
-        if (typeof window.ethereum !== 'undefined') {
-            window.web3 = new Web3(window.ethereum);
-            await window.ethereum.enable();
-            document.getElementById('btn-connect').innerHTML = "wallet connected"
-        } else {
-            alert('Please install or connect to your MetaMask to use this DApp.');
-        }
+        const balance = await ethereum.request({ method: 'eth_getBalance', params: [account, 'latest'] });
+        const formattedBalance = web3.utils.fromWei(balance, 'ether');
+        document.getElementById('balance').textContent = 'Balance: ' + formattedBalance + ' ETH';
+        document.getElementById('yourAddress').textContent = account;
     } catch (error) {
-        alert('connection error pls try again');
+        console.error('Error fetching balance:', error);
+        throw new Error('Error fetching balance');
     }
-    recieveFund();
-    handleBalance();
-    
 }
-
-async function handleBalance() {
-    const accounts = await window.web3.eth.getAccounts();
-    const account = accounts[0];
-    const balance = await window.web3.eth.getBalance(account);
-    document.getElementById('balance').innerText = window.web3.utils.fromWei(balance, 'ether') + ' ETH';
-}
-
-
 
 async function sendFunds() {
     const recipient = document.getElementById('sendToAddress').value;
@@ -34,13 +40,14 @@ async function sendFunds() {
     let sendcard =  document.getElementById('card-send');
     const sendNotification = document.getElementById('send-notification')
 
-    let balanceNotification = document.getElementById('bal-notification');
-    let cardBalance = document.getElementById('card-balance');
+//     let balanceNotification = document.getElementById('bal-notification');
+//     let cardBalance = document.getElementById('card-balance');
    
     const accounts = await window.web3.eth.getAccounts();
     const account = accounts[0];
-    const balance = await window.web3.eth.getBalance(account);
-    const currBalance = document.getElementById('balance').innerText = window.web3.utils.fromWei(balance, 'ether')
+  
+//     const balance = await window.web3.eth.getBalance(account);
+//     const currBalance = document.getElementById('balance').innerText = window.web3.utils.fromWei(balance, 'ether')
 
     if (!window.web3.utils.isAddress(recipient) || amount <= 0 || amount === "") {
         sendcard.style.display = "block";
@@ -51,38 +58,41 @@ async function sendFunds() {
         }, 4000)
         return;
     }
-
-
-    if(Number(currBalance) === 0) {
-        cardBalance.style.display = "block";
-        balanceNotification.innerHTML = "You have an insufficient balance";
-
-        setTimeout(() => {
-            cardBalance.style.display = "none";
-        }, 4000)
-        return
-    }
-    
-    const amountWei = window.web3.utils.toWei(amount, 'ether');
-
-    try {
-        await window.web3.eth.sendTransaction({
-            from: (await window.web3.eth.getAccounts())[0],
-            to: recipient,
-            value: amountWei
-        });
-        sendcard.style.display = "block";
-        sendcard.style.backgroundColor = "green";
-        sendNotification.innerHTML = "transaction successfully sent";
-
-        handleBalance();
-        transactionSuccessful = true;
-        handleUserHistory()
-
-    } catch (error) {
-        alert('Failed to send transaction: ' + error.message);
-    }
+  try {
+    // Send Transaction
+    const transaction = {
+      from: account.
+      to: recipient;
+      value: web3.utils.toWei(amount, 'ether')
+    };
+    const receipt = await ethereum.request({ method: 'eth_sendTransaction', params: [transaction] });
+    console.log('Transaction receipt:', receipt);
+  
+    // Update transaction status and handle history
+    transactionSuccessful = true;
+    handleUserHistory();
+  } catch (error) {
+    console.error('Transaction Failed:', error);
+    throw new Error('Transaction Failed: ' + error.message);
+  }
 }
+
+//     // Function to disconnect MetaMask
+//     async function disconnectWallet() {
+//         try {
+//             if (isConnected) {
+//                 await ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+//                 console.log('Disconnected from MetaMask');
+//                 document.getElementById('connectButton').textContent = 'Connect to MetaMask';
+//                 isConnected = false;
+//             }
+//         } catch (error) {
+//             console.error('MetaMask disconnection error:', error);
+//             if (error.code !== -32002) {
+//                 alert('Error disconnecting from MetaMask.');
+//             }
+//         }
+//     }
 
 
 async function recieveFund() {
@@ -94,75 +104,44 @@ async function recieveFund() {
 
 async function viewToken() {
     try {
-        if (typeof window.ethereum !== 'undefined') {
-            window.web3 = new Web3(window.ethereum);
-            const accounts = await web3.eth.getAccounts();
-
-            if (accounts.length === 0) {
-                alert('Please connect MetaMask to view your token balances.');
-                return;
-            }
-
-            const walletAddress = accounts[0];
-
-            const ERC20_ABI = [
-                {
-                    "constant": true,
-                    "inputs": [{"name": "_owner", "type": "address"}],
-                    "name": "balanceOf",
-                    "outputs": [{"name": "balance", "type": "uint256"}],
-                    "payable": false,
-                    "stateMutability": "view",
-                    "type": "function"
-                }
-            ];
-            
-            const tokenContracts = [
-                {
-                    name: 'Ethereum',
-                    address: '', 
-                    isEthereum: true
-                },
-            ];
-
-            const tokenBalances = [];
-
-            for (const token of tokenContracts) {
-                if (token.isEthereum) {
-                    const balance = await web3.eth.getBalance(walletAddress);
-                    tokenBalances.push({
-                        name: token.name,
-                        balance: web3.utils.fromWei(balance, 'ether')
-                    });
-                } else {
-                    const contract = new web3.eth.Contract(ERC20_ABI, token.address);
-                    const balance = await contract.methods.balanceOf(walletAddress).call();
-                    tokenBalances.push({
-                        name: token.name,
-                        balance: web3.utils.fromWei(balance, 'ether')
-                    });
-                }
-            }
-
-            const balancesDiv = document.getElementById('tokensList');
-            balancesDiv.innerHTML = ''; 
-            let myToken = tokenBalances.forEach(token => {
-                const tokenDiv = document.createElement('div');
-                tokenDiv.innerHTML = `Token Name: <strong> ${token.name}</strong><br>Token Balance: <strong>${token.balance}</strong>`;
-                balancesDiv.appendChild(tokenDiv);
-               
-            });
-
-            setTimeout(()=> {
-                balancesDiv.innerHTML = ""
-            }, 5000)
-
-        } else alert('MetaMask is not installed. Please install MetaMask to view your token balances.');
+      if (typeof window.ethereum !== 'undefined') {
+        window.web3 = new Web3(window.ethereum);
+        const accounts = await web3.eth.getAccounts();
+        
+        if (accounts.length === 0) {
+          alert('Please connect MetaMask to view your token balances.');
+          return;
+        }
+        renderTokenBalances();
+      }
     } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to view token balances. Please try again or check your MetaMask settings.');
+      console.error('Error viewing token balance:', error);
+      alert('Error viewing token balance: ', error.message);
     }
 }
+      
+async function renderTokenBalances() {
+    try {
+        // Dummy token data
+        const dummyTokens = [
+            { name: 'Token1', balance: '100' },
+            { name: 'Token2', balance: '200' }
+            // Add more dummy tokens as needed
+        ];
+
+        const balancesDiv = document.getElementById('tokensList');
+        balancesDiv.innerHTML = ''; 
+        dummyTokens.forEach(token => {
+            const tokenDiv = document.createElement('div');
+            tokenDiv.innerHTML = `Token Name: <strong> ${token.name}</strong><br>Token Balance: <strong>${token.balance}</strong>`;
+            balancesDiv.appendChild(tokenDiv);
+        });
+    } catch (error) {
+        console.error('Error fetching token balances:', error);
+        throw new Error('Error fetching token balances');
+    }
+}
+      
 
 function handleUserHistory() {
     let userHistory = document.getElementById('transaction-history')
@@ -191,11 +170,44 @@ function handleUserHistory() {
 }
 
 
+    async function validateInputs(recipient, amount) {
+        if (recipient.trim() === '' || amount.trim() === '' || isNaN(amount) || parseFloat(amount) <= 0) {
+            throw new Error('Please enter a valid recipient address and amount.');
+        }
+        if (!web3.utils.isAddress(recipient)) {
+            throw new Error('Invalid recipient address.');
+        }
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+        const recipient = document.getElementById('sendToAddress').value;
+        const amount = document.getElementById('sendAmount').value;
+
+        try {
+            // Validate inputs
+            await validateInputs(recipient, amount);
+            // Connect to MetaMask and get the selected account
+            const from = await connectUserWallet();
+            // Send transaction
+            const receipt = await sendTransaction(from, recipient, amount);
+            // Reload balance after successful transaction
+            await loadBalance(from);
+            // Show success notification
+            document.getElementById('notification').textContent = 'Transaction successful!';
+            document.getElementById('notification').style.display = 'block';
+        } catch (error) {
+            // Show error notification
+            document.getElementById('notification').textContent = error.message;
+            document.getElementById('notification').style.display = 'block';
+        }
+    }
+
+    // document.getElementById('connectButton').addEventListener('click', connectUserWallet);
+    document.getElementById('sendButton').addEventListener('click', handleSubmit);
 
 
-
-
-let copyright = document.getElementById("copyright")
-
-let date = new Date()
-copyright.innerHTML = date.getFullYear()
+    let copyright = document.getElementById("copyright")
+    let date = new Date()
+    copyright.innerHTML = date.getFullYear()
+});
