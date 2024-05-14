@@ -7,8 +7,11 @@ async function connectUserWallet() {
   try {
       if (window.ethereum) {
         web3 = new Web3(window.ethereum);
-        await window.ethereum.enable();
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await web3.eth.getAccounts();
+        if (accounts.length === 0) {
+            throw new Error('No accounts found. Please connect to MetaMask.');
+        }
         console.log('Connected to MetaMask');
         const account = accounts[0];
         await receiveFund();
@@ -52,7 +55,7 @@ async function sendFunds() {
 //     const balance = await window.web3.eth.getBalance(account);
 //     const currBalance = document.getElementById('balance').innerText = window.web3.utils.fromWei(balance, 'ether')
 
-    if (!window.web3.utils.isAddress(recipient) || amount <= 0 || amount === "") {
+    if (!web3.utils.isAddress(recipient) || amount <= 0 || amount === "") {
         // sendcard.style.display = "block";
         sendNotification.textContent = "invalid input please try again.";
 
@@ -90,7 +93,7 @@ async function viewToken() {
     try {
         if (typeof window.ethereum !== 'undefined') {
             window.web3 = new Web3(window.ethereum);
-            const accounts = await web3.eth.getAccounts();
+            const accounts = await window.web3.eth.getAccounts();
 
             if (accounts.length === 0) {
                 alert('Please connect MetaMask to view your token balances.');
@@ -175,7 +178,7 @@ function handleUserHistory() {
             userHistory.innerHTML = ""
         }, 4000)
 
-    }else {
+    } else {
         userHistory.innerHTML = "You have no transactions yet"
         setTimeout(() => {
             userHistory.innerHTML = ""
