@@ -40,7 +40,7 @@ async function sendFunds() {
     const recipient = document.getElementById('sendToAddress').value;
     const amount = document.getElementById('sendAmount').value;
 
-    let sendcard =  document.getElementById('card-send');
+    // let sendcard =  document.getElementById('card-send');
     const sendNotification = document.getElementById('send-notification')
 
 //     let balanceNotification = document.getElementById('bal-notification');
@@ -53,11 +53,11 @@ async function sendFunds() {
 //     const currBalance = document.getElementById('balance').innerText = window.web3.utils.fromWei(balance, 'ether')
 
     if (!window.web3.utils.isAddress(recipient) || amount <= 0 || amount === "") {
-        sendcard.style.display = "block";
-        sendNotification.innerHTML = "invalid input please try again.";
+        // sendcard.style.display = "block";
+        sendNotification.textContent = "invalid input please try again.";
 
         setTimeout(() => {
-            sendcard.style.display = "none";
+            sendNotification.textContent = "";
         }, 4000)
         return;
     }
@@ -80,79 +80,91 @@ async function sendFunds() {
   }
 }
 
-//     // Function to disconnect MetaMask
-//     async function disconnectWallet() {
-//         try {
-//             if (isConnected) {
-//                 await ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
-//                 console.log('Disconnected from MetaMask');
-//                 document.getElementById('connectButton').textContent = 'Connect to MetaMask';
-//                 isConnected = false;
-//             }
-//         } catch (error) {
-//             console.error('MetaMask disconnection error:', error);
-//             if (error.code !== -32002) {
-//                 alert('Error disconnecting from MetaMask.');
-//             }
-//         }
-//     }
-
-
 async function receiveFund() {
     const accounts = await web3.eth.getAccounts();
     const walletAddress = accounts[0];
-    let userAddress = document.getElementById('yourAddress')
-    userAddress.innerHTML = walletAddress
+    document.getElementById('yourAddress').textContent = walletAddress
 }
 
 async function viewToken() {
     try {
-      if (typeof window.ethereum !== 'undefined') {
-        window.web3 = new Web3(window.ethereum);
-        const accounts = await web3.eth.getAccounts();
-        
-        if (accounts.length === 0) {
-          alert('Please connect MetaMask to view your token balances.');
-          return;
-        }
-        renderTokenBalances();
-      }
+        if (typeof window.ethereum !== 'undefined') {
+            window.web3 = new Web3(window.ethereum);
+            const accounts = await web3.eth.getAccounts();
+
+            if (accounts.length === 0) {
+                alert('Please connect MetaMask to view your token balances.');
+                return;
+            }
+
+            const walletAddress = accounts[0];
+
+            const ERC20_ABI = [
+                {
+                    "constant": true,
+                    "inputs": [{"name": "_owner", "type": "address"}],
+                    "name": "balanceOf",
+                    "outputs": [{"name": "balance", "type": "uint256"}],
+                    "payable": false,
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ];
+            
+            const tokenContracts = [
+                {
+                    name: 'Ethereum',
+                    address: '', 
+                    isEthereum: true
+                },
+            ];
+
+            const tokenBalances = [];
+
+            for (const token of tokenContracts) {
+                if (token.isEthereum) {
+                    const balance = await web3.eth.getBalance(walletAddress);
+                    tokenBalances.push({
+                        name: token.name,
+                        balance: web3.utils.fromWei(balance, 'ether')
+                    });
+                } else {
+                    const contract = new web3.eth.Contract(ERC20_ABI, token.address);
+                    const balance = await contract.methods.balanceOf(walletAddress).call();
+                    tokenBalances.push({
+                        name: token.name,
+                        balance: web3.utils.fromWei(balance, 'ether')
+                    });
+                }
+            }
+
+            const balancesDiv = document.getElementById('tokensList');
+            balancesDiv.innerHTML = ''; 
+            let myToken = tokenBalances.forEach(token => {
+                const tokenDiv = document.createElement('div');
+                tokenDiv.innerHTML = `<strong>${token.name}:</strong> ${token.balance}`;
+                balancesDiv.appendChild(tokenDiv);
+               
+            });
+
+            setTimeout(()=> {
+                balancesDiv.innerHTML = ""
+            }, 5000)
+
+        } else alert('MetaMask is not installed. Please install MetaMask to view your token balances.');
     } catch (error) {
-      console.error('Error viewing token balance:', error);
-      alert('Error viewing token balance: ', error.message);
+        console.error('Error:', error);
+        alert('Failed to view token balances. Please try again or check your MetaMask settings.');
     }
 }
-      
-async function renderTokenBalances() {
-    try {
-        // Dummy token data
-        const dummyTokens = [
-            { name: 'Token1', balance: '100' },
-            { name: 'Token2', balance: '200' }
-            // Add more dummy tokens as needed
-        ];
-
-        const balancesDiv = document.getElementById('tokensList');
-        balancesDiv.innerHTML = ''; 
-        dummyTokens.forEach(token => {
-            const tokenDiv = document.createElement('div');
-            tokenDiv.innerHTML = `Token Name: <strong> ${token.name}</strong><br>Token Balance: <strong>${token.balance}</strong>`;
-            balancesDiv.appendChild(tokenDiv);
-        });
-    } catch (error) {
-        console.error('Error fetching token balances:', error);
-        throw new Error('Error fetching token balances');
-    }
-}
-      
-
+         
 function handleUserHistory() {
-    let userHistory = document.getElementById('transaction-history')
+    const userHistory = document.getElementById('transaction-history')
     const recipient = document.getElementById('sendToAddress').value;
     const amount = document.getElementById('sendAmount').value;
 
     let userHistoryArray = []
-    let transactionDate = new Date();
+    const transactionDate = new Date();
 
     if (transactionSuccessful || userHistoryArray.length !== 0) {
         userHistory.innerHTML = `you made transaction of ${amount} Eth to ${recipient} on ${transactionDate.getDate()}`
