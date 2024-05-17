@@ -2,6 +2,7 @@
 let transactionSuccessful = false;
 let web3;
 
+// Function to connect wallet to metamask
 async function connectUserWallet() {
   let account;
   try {
@@ -39,24 +40,26 @@ async function loadBalance(account) {
     }
 }
 
+// Function to send funds
 async function sendFunds() {
     const recipient = document.getElementById('sendToAddress').value;
     const amount = document.getElementById('sendAmount').value;
 
-    // let sendcard =  document.getElementById('card-send');
+    let sendcard =  document.getElementById('card-send');
     const sendNotification = document.getElementById('send-notification')
 
-//     let balanceNotification = document.getElementById('bal-notification');
-//     let cardBalance = document.getElementById('card-balance');
+    let balanceNotification = document.getElementById('bal-notification');
+    let cardBalance = document.getElementById('card-balance');
    
     const accounts = await window.web3.eth.getAccounts();
     const account = accounts[0];
   
-//     const balance = await window.web3.eth.getBalance(account);
-//     const currBalance = document.getElementById('balance').innerText = window.web3.utils.fromWei(balance, 'ether')
+    const balance = await window.web3.eth.getBalance(account);
+    const currBalance = document.getElementById('balance').innerText = web3.utils.fromWei(balance, 'ether')
 
+    // Input Validations
     if (!web3.utils.isAddress(recipient) || amount <= 0 || amount === "") {
-        // sendcard.style.display = "block";
+        sendcard.style.display = "block";
         sendNotification.textContent = "invalid input please try again.";
 
         setTimeout(() => {
@@ -64,31 +67,44 @@ async function sendFunds() {
         }, 4000)
         return;
     }
-  try {
-    // Send Transaction
-    const transaction = {
-      from: account,
-      to: recipient,
-      value: web3.utils.toWei(amount, 'ether')
-    };
-    const receipt = await ethereum.request({ method: 'eth_sendTransaction', params: [transaction] });
-    console.log('Transaction receipt:', receipt);
-  
-    // Update transaction status and handle history
-    transactionSuccessful = true;
-    handleUserHistory();
-  } catch (error) {
-    console.error('Transaction Failed:', error);
-    throw new Error('Transaction Failed: ' + error.message);
-  }
+
+    if(Number(currBalance) === 0) {
+        cardBalance.style.display = "block";
+        balanceNotification.innerHTML = "You have an insufficient balance";
+
+        setTimeout(() => {
+            cardBalance.style.display = "none";
+        }, 4000)
+        return
+    }
+
+    const amountWei = window.web3.utils.toWei(amount, 'ether');
+
+    try {
+        await window.web3.eth.sendTransaction({
+            from: (await window.web3.eth.getAccounts())[0],
+            to: recipient,
+            value: amountWei
+        });
+        sendcard.style.display = "block";
+        sendcard.style.backgroundColor = "green";
+        sendNotification.innerHTML = "transaction successfully sent";
+
+        loadBalance(account);
+
+    } catch (error) {
+        alert('Failed to send transaction: ' + error.message);
+    }
 }
 
+// Function to receive funds
 async function receiveFund() {
     const accounts = await web3.eth.getAccounts();
     const walletAddress = accounts[0];
     document.getElementById('yourAddress').textContent = walletAddress
 }
 
+// Function to view tokens dynamically
 async function viewToken() {
     try {
         if (typeof window.ethereum !== 'undefined') {
@@ -160,7 +176,8 @@ async function viewToken() {
         alert('Failed to view token balances. Please try again or check your MetaMask settings.');
     }
 }
-         
+
+// Function to show transaction history
 function handleUserHistory() {
     const userHistory = document.getElementById('transaction-history')
     const recipient = document.getElementById('sendToAddress').value;
