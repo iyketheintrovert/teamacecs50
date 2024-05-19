@@ -5,14 +5,14 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f4f4f9;
+    background-color: #2a2a2b;
     margin: 20px;
     padding: 20px;
-    color: #333;
+    color: #faf1f1;
 }
 
 h1,h2 {
-    color: #444;
+    color: #e9e3e3;
     cursor: pointer;
 }
 
@@ -61,6 +61,9 @@ input[type="number"] {
     box-sizing: border-box; 
 }
 
+#yourAddress{
+    color: #000;
+}
 
 ul {
     list-style-type: none;
@@ -131,6 +134,41 @@ li {
     cursor: pointer;
 }
 
+.mt-4{
+    position: relative;
+    margin: 200px auto 0;
+    background: linear-gradient(0deg, #000, #262626);
+}
+
+.mt-4:before,.mt-4:after{
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background: linear-gradient(45deg, #fb0094, #0000ff,#00ff00,#ffff00,#ff0000,#fb0094, #0000ff,#00ff00,#ffff00,#ff0000);
+    background-size: 400%;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    z-index: -1;
+    border-radius: 10px;
+    animation: animate 20s linear infinite;
+}
+
+.mt-4:after{
+    filter: blur(20px);
+}
+
+@keyframes animate {
+    0%{
+        background-position: 0 0;
+    }
+    50%{
+        background-position: 300% 0;
+    }
+    100%{
+        background-position: 0 0;
+    }
+}
 
 @media (max-width: 768px) {
     #dual-sections {
@@ -146,4 +184,3 @@ li {
     }
 }
 
-/* To make the error notification responsive */

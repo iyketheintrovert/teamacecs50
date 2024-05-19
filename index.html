@@ -11,14 +11,14 @@
 </head>
 <body>
     <h1>ACE Wallet</h1>
-    <p id="connectSection" class="mt-4">
+    <p id="connectSection">
         <button onclick="connectUserWallet()" id="connectButton" class="btn btn-primary">Connect to MetaMask</button>
     </p>
 
     <div id="balanceSection" class="mt-4">
         <h2>Account Balance</h2>
-        <div id="balance" class="balance-text">0 ETH</div>
-        <p id="bal-notification">error</p>
+        <div id="balance" class="balance-text"><span id="yourAddress">0 ETH</span></div>
+        <!-- <p id="bal-notification">error</p> -->
     </div>
 
     <div id="sendSection" class="mt-4">
@@ -34,18 +34,18 @@
 
     <div id="receiveSection" class="mt-4">
         <h2>Receive Ether</h2>
-        <div><p>Your Address: <span id="yourAddress">-</span></p></div>
+        <div><p><span id="yourAddress">Your Address: -</span></p></div>
         <p class="mt-4">Copy and share this address to receive Ether.</p>
     </div>
 
-    <div id="dual-sections" >
-        <div id="tokensSection" onclick=" viewToken()" class="mt-4">
-            <h2>Your Tokens</h2>
+    <div id="dual-sections" class="mt-4">
+        <div id="tokensSection" onclick=" viewToken()">
+            <h2><span id="yourAddress">Your Tokens</span></h2>
             <ul id="tokensList" class="list-group"></ul>
         </div>
 
-        <div id="historySection" class="mt-4">
-            <h2 onclick="handleUserHistory()">Transaction History</h2>
+        <div id="historySection" >
+            <h2 onclick="handleUserHistory()"><span id="yourAddress">Transaction History</span></h2>
             <ul id="transaction-history" class="list-group">
                 <!-- Transaction history will be listed here -->
             </ul>

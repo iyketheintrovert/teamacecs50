@@ -11,7 +11,7 @@ This project was made as a Hackathon project for CS50. Specifically made by team
 
 - Ikenna Enyidede: [GitHub](https://github.com/iyketheintrovert). [LinkedIn](https://www.linkedin.com/in/enyidede-ikenna)
 - Mercy Bassey: [GitHub](https://github.com/mercybassey/), [LinkedIn](https://www.linkedin.com/in/mercy-bassey-a18682192/)
-- [name]: [GitHub](GitHub link here). [LinkedIn](LinkedIn link here)
+- Imbufe Anthony: [GitHub](https://github.com/TonnieRex). [LinkedIn](https://www.linkedin.com/in/anthony-imbufe)
 - [name]: [GitHub](GitHub link here). [LinkedIn](LinkedIn link here)
 
 ## FEATURES
